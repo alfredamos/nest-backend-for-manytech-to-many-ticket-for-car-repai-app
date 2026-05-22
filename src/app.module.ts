@@ -5,6 +5,12 @@ import { TechniciansModule } from './technicians/technicians.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { UsersModule } from './users/users.module';
 import { AssignedTicketsModule } from './assigned-tickets/assigned-tickets.module';
+import { TokensModule } from './tokens/tokens.module';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { PrismaService } from './prisma/prisma.service';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -14,7 +20,21 @@ import { AssignedTicketsModule } from './assigned-tickets/assigned-tickets.modul
     TicketsModule,
     UsersModule,
     AssignedTicketsModule,
+    TokensModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    PrismaService,
+  ],
 })
 export class AppModule {}
