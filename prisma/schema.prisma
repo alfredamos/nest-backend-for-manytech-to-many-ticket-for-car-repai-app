@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -11,3 +6,129 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+model AssignedTicket {
+  tech   Technician @relation(fields: [techId], references: [id], onDelete: Cascade)
+  techId String
+
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId String
+
+  status    Status   @default(Open)
+  completed Boolean  @default(false)
+  assignBy  String   @db.VarChar(255)
+  assignAt  DateTime @default(now())
+
+  @@id([techId, ticketId])
+  @@map("assignedTickets")
+}
+
+model Customer {
+  id      String  @id @default(uuid())
+  address String  @db.VarChar(255)
+  active  Boolean @default(true)
+  notes   String? @db.Text
+
+  tickets Ticket[]
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String   @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customers")
+}
+
+model Technician {
+  id        String @id @default(uuid())
+  specialty String @db.VarChar(255)
+
+  tickets AssignedTicket[]
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String           @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("technicians")
+}
+
+model Ticket {
+  id          String @id @default(uuid())
+  title       String @db.VarChar(255)
+  description String @db.Text
+
+  technicians AssignedTicket[]
+  customer    Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tickets")
+}
+
+model Token {
+  id           String    @id @default(uuid())
+  accessToken  String    @unique @db.VarChar(750)
+  refreshToken String    @unique @db.VarChar(750)
+  revoked      Boolean
+  expired      Boolean
+  tokenType    TokenType @default(Bearer)
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tokens")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(255)
+  email       String   @unique @db.VarChar(255)
+  phone       String   @db.VarChar(255)
+  password    String   @db.VarChar(255)
+  gender      Gender   @default(Male)
+  role        Role     @default(User)
+  userType    UserType @default(Technician)
+  image       String   @db.VarChar(255)
+  dateOfBirth DateTime
+
+  customer   Customer?
+  technician Technician?
+
+  Token Token[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Gender {
+  Female
+  Male
+}
+
+enum Role {
+  Admin
+  User
+}
+
+enum TokenType {
+  Bearer
+}
+
+enum Status {
+  Closed
+  Open
+}
+
+enum UserType {
+  Customer
+  Technician
+}
+
