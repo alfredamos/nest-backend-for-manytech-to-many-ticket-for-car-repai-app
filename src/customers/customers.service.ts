@@ -8,6 +8,20 @@ import {CustomerWithUser} from "../models/customerWithUser.model";
 export class CustomersService {
     constructor(private readonly prisma: PrismaService) {}
 
+    async changeCustomerStatus(id: string){
+        //----> Fetch the customer with the giving id.
+        const customer = await this.getOneCustomer(id);
+
+        //----> Change customer status.
+        const active = !customer.active;
+
+        //----> Update the customer status.
+        const updatedCustomer = await this.prisma.customer.update({where: {id}, data: {active}, include: {user: true}});
+
+        //----> Send back response.
+        return toCustomerResponse(updatedCustomer as CustomerWithUser);
+    }
+
     async createCustomer(customer: CustomerUncheckedCreateInput) {
         //----> Insert the new customer into the database.
         const newCustomer = await this.prisma.customer.create({data: customer, include: {user: true}});
