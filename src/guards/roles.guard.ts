@@ -9,13 +9,12 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Role } from '../generated/prisma/enums';
-import { TokenJwt } from '../models/tokenJwt.model';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector, private readonly authService: AuthService) {}
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
       context.getClass(),
       context.getHandler(),
@@ -34,7 +33,7 @@ export class RolesGuard implements CanActivate {
     const request : Request = context.switchToHttp().getRequest();
 
     //----> Get the role from session.
-    const parsedToken = this.authService.getUserSession(request);
+    const parsedToken = await this.authService.getUserSession(request);
     const tokenJwt = {id: parsedToken.id, email: parsedToken.email, name: parsedToken.name, role: parsedToken.role};
 
     if (!tokenJwt){

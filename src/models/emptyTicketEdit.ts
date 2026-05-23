@@ -1,6 +1,6 @@
-import {TicketEdit} from "../validations/ticket.validation";
+import {TicketUncheckedUpdateInput} from "../generated/prisma/models/Ticket";
 
-export const emptyTicketEdit: TicketEdit = {
+export const emptyTicketEdit: TicketUncheckedUpdateInput = {
     id: "",
     title: "",
     description: "",

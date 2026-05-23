@@ -1,4 +1,4 @@
-function adapterParameters() {
+export function adapterParameters() {
   return {
     user: process.env.USER,
     password: process.env.PASSWORD,

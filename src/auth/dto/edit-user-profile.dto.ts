@@ -36,4 +36,7 @@ export class EditUserProfileDto {
   @IsOptional()
   @IsEnum(Gender)
   gender: Gender;
+
+  @IsNotEmpty()
+  dateOfBirth: Date
 }

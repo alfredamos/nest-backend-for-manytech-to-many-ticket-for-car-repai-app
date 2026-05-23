@@ -40,4 +40,7 @@ export class SignupUserDto {
   @IsOptional()
   @IsEnum(Gender)
   gender: Gender;
+
+  @IsNotEmpty()
+  dateOfBirth: Date
 }

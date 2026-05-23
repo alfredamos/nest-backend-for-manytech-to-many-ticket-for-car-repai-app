@@ -1,7 +1,8 @@
-import { Role, User } from '../generated/prisma/client';
+import { User } from '../generated/prisma/client';
 import { EditUserProfileDto } from '../auth/dto/edit-user-profile.dto';
+import {UserUpdateInput} from "../generated/prisma/models/User";
 
-export function fromEditUserToUser(request: EditUserProfileDto, user: User): User {
+export function fromEditUserToUser(request: EditUserProfileDto, user: User): UserUpdateInput {
   return {
     id: user.id,
     email: user.email,
@@ -11,7 +12,6 @@ export function fromEditUserToUser(request: EditUserProfileDto, user: User): Use
     image: request.image,
     phone: request.phone,
     gender: request.gender,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    dateOfBirth: request.dateOfBirth,
   };
 }

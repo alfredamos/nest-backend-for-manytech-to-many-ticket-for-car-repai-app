@@ -48,7 +48,7 @@ export class AuthService {
     const user = await this.getUserByEmail(request.email);
 
     //----> Check for valid password.
-    if (await this.passwordNotValid(request.oldPassword, user.password)) {
+    if (await this.passwordNotValid(request.password, user.password)) {
       throw new UnauthorizedException('Invalid credentials!');
     }
 
@@ -163,7 +163,7 @@ export class AuthService {
     const user = await this.getUserByEmail(loginUser.email);
 
     //----> Check for valid password.
-    if (await this.passwordNotValid(loginUser.email, user.password)){
+    if (await this.passwordNotValid(loginUser.password, user.password)){
       throw new UnauthorizedException("Invalid credentials!");
     }
 
@@ -199,7 +199,7 @@ export class AuthService {
 
   async refreshUserToken(request: Request, response: Response) {
     //----> Get the refresh token.
-    const refreshToken = this.getToken(CookieParam.refreshTokenPath, request);
+    const refreshToken = this.getToken(CookieParam.refreshTokenName, request);
 
     //----> Validate refresh-token.
     const jwtPayload = await this.validateUserToken(refreshToken);

@@ -8,11 +8,13 @@ import {LoginUserDto} from "./dto/loginUserDto";
 import {SignupUserDto} from "./dto/signupUserDto";
 import {Roles} from "../decorators/role.decorator";
 import {IsPublic} from "../decorators/is-public.decorator";
+import {Role} from "../generated/prisma/enums";
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Roles(Role.Admin, Role.User)
   @Patch('change-password')
   async changeUserPassword(@Body() changeUserPassword: ChangeUserPasswordDto){
     return await this.authService.changeUserPassword(changeUserPassword);

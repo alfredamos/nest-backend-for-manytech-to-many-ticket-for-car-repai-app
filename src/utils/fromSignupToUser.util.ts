@@ -1,11 +1,10 @@
 import { SignupUserDto } from "../auth/dto/signupUserDto";
-import {Role, User} from "../generated/prisma/client";
-import { v4 as uuidv4 } from 'uuid';
+import {Role} from "../generated/prisma/enums";
+import {UserCreateInput} from "../generated/prisma/models/User";
 
 
-export function fromSignupToUser(signup: SignupUserDto): User {
+export function fromSignupToUser(signup: SignupUserDto): UserCreateInput {
     return {
-        id: uuidv4(),
         email: signup.email,
         password: signup.password,
         name: signup.name,
@@ -13,7 +12,6 @@ export function fromSignupToUser(signup: SignupUserDto): User {
         image: signup.image,
         phone: signup.phone,
         gender: signup.gender,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        dateOfBirth: signup.dateOfBirth,
     }
 }
