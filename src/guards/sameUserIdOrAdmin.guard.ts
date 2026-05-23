@@ -8,13 +8,13 @@ import { Role } from '../generated/prisma/enums';
 import { AuthService } from '../auth/auth.service';
 
 export class SameUserIdOrAdminGuard implements CanActivate {
-  constructor(private authService: AuthService){}
-  canActivate(context: ExecutionContext): boolean {
+  constructor(private readonly authService: AuthService){}
+  async canActivate(context: ExecutionContext) {
     //----> Get the request object.
     const req: Request = context.switchToHttp().getRequest<Request>(); //----> Retrieve all objects on request object.
 
     //----> get the user id from param.
-    const session = this.authService?.getUserSession(req);
+    const session = await this.authService?.getUserSession(req);
     const userIdFromParam = req.params?.userId as string;
 
     //----> Get the user id from the user object on a request object.

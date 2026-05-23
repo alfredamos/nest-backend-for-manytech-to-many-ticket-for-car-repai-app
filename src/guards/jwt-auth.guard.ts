@@ -18,7 +18,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext) {
     const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
       context.getHandler(),
       context.getClass(),
@@ -42,9 +42,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     //----> Check for a valid user session.
-    const session = this.authService.getUserSession(req);
+    const session = await this.authService.getUserSession(req);
 
     //----> Valid token
-    return !!session;
+    return session.isLoggedIn;
   }
 }
