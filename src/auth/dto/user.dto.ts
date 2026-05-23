@@ -1,4 +1,4 @@
-import { User } from '../../generated/prisma/client';
+import {User, UserType} from '../../generated/prisma/client';
 
 export class UserDto {
   id: string;
@@ -8,6 +8,7 @@ export class UserDto {
   image: string;
   phone: string;
   gender: string;
+  userType: UserType;
 }
 
 export function fromUserToUserDto(user: User) {
@@ -19,5 +20,6 @@ export function fromUserToUserDto(user: User) {
     image: user.image,
     phone: user.phone,
     gender: user.gender,
+    userType: user.userType
   };
 }
