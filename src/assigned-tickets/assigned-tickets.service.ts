@@ -6,10 +6,12 @@ import {
 import {PrismaService} from "../prisma/prisma.service";
 import {AssignedTicketRequest, toAssignedTicketResponse} from "../models/assignedTicketResponse.model";
 import {Status} from "../generated/prisma/enums";
+import {AuthService} from "../auth/auth.service";
+import {Request} from "express";
 
 @Injectable()
 export class AssignedTicketsService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService, private readonly authService: AuthService) {}
 
     async changeAssignedTicketStatus(techId: string, ticketId: string){
         //----> Fetch the ticket with the giving tech-id and ticket-id.
@@ -17,13 +19,20 @@ export class AssignedTicketsService {
 
         //----> Change the ticket status.
         const completed = !ticket.completed;
-        const status = ticket.completed ? Status.Closed : Status.Open;
+        const status = ticket.completed ? Status.Open : Status.Closed;
 
         //----> Update the assigned-ticket info in db.
         const updatedTicket = await this.prisma.assignedTicket.update({where: {techId_ticketId: {techId, ticketId}}, data: {status, completed}, include: {ticket: {include: {customer: {include: {user: true}}}}, tech: {include: {user: true}}}});
+
+        //----> Send back the response.
+        return toAssignedTicketResponse(updatedTicket as AssignedTicketRequest);
     }
 
-    async createAssignedTicket(ticket: AssignedTicketUncheckedCreateInput) {
+    async createAssignedTicket(ticket: AssignedTicketUncheckedCreateInput, request: Request) {
+        //----> Get user-session.
+        const session = await this.authService.getUserSession(request);
+        ticket.assignBy = session.name;
+
         //----> Create the ticket.
         const newTicket = await this.prisma.assignedTicket.create({data: ticket, include: {ticket: {include: {customer: {include: {user: true}}}}, tech: {include: {user: true}}}});
 

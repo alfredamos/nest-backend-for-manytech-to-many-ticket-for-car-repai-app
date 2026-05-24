@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, Req} from '@nestjs/common';
 import { AssignedTicketsService } from './assigned-tickets.service';
 import {
     AssignedTicketUncheckedCreateInput,
@@ -6,10 +6,41 @@ import {
 } from "../generated/prisma/models/AssignedTicket";
 import {Roles} from "../decorators/role.decorator";
 import {Role} from "../generated/prisma/enums";
+import {Request} from "express";
 
-@Controller('assigned-tickets')
+@Controller('assign-tickets')
 export class AssignedTicketsController {
     constructor(private readonly assignedTicketService: AssignedTicketsService) {}
+
+    @Roles(Role.Admin)
+    @Post()
+    async createAssignedTicket(@Body() ticket: AssignedTicketUncheckedCreateInput, @Req() request: Request) {
+        return await this.assignedTicketService.createAssignedTicket(ticket, request);
+    }
+
+    @Roles(Role.Admin)
+    @Get('by-tech-id/:techId')
+    async getAssignedTicketsByTechId(@Param('techId') techId: string) {
+        return await this.assignedTicketService.getAssignedTicketsByTechId(techId);
+    }
+
+    @Roles(Role.Admin)
+    @Get('by-ticket-id/:ticketId')
+    async getAssignedTicketsByTicketId(@Param('ticketId') ticketId: string) {
+        return await this.assignedTicketService.getAssignedTicketsByTicketId(ticketId);
+    }
+
+    @Roles(Role.Admin)
+    @Get('all/completed')
+    async getCompletedAssignedTickets() {
+        return await this.assignedTicketService.getCompletedAssignedTickets();
+    }
+
+    @Roles(Role.Admin)
+    @Get('all/incompleted')
+    async getInCompletedAssignedTickets() {
+        return await this.assignedTicketService.getInCompletedAssignedTickets();
+    }
 
     @Roles(Role.Admin)
     @Patch('change-status/:techId/:ticketId')
@@ -17,11 +48,6 @@ export class AssignedTicketsController {
         return await this.assignedTicketService.changeAssignedTicketStatus(techId, ticketId);
     }
 
-    @Roles(Role.Admin)
-    @Post()
-    async createAssignedTicket(@Body() ticket: AssignedTicketUncheckedCreateInput) {
-        return await this.assignedTicketService.createAssignedTicket(ticket);
-    }
 
     @Roles(Role.Admin)
     @Delete(':techId/:ticketId')
@@ -53,27 +79,5 @@ export class AssignedTicketsController {
         return await this.assignedTicketService.getAssignedTicketById(techId, ticketId);
     }
 
-    @Roles(Role.Admin)
-    @Get('by-tech-id/:techId')
-    async getAssignedTicketsByTechId(@Param('techId') techId: string) {
-        return await this.assignedTicketService.getAssignedTicketsByTechId(techId);
-    }
-
-    @Roles(Role.Admin)
-    @Get('by-ticket-id/:ticketId')
-    async getAssignedTicketsByTicketId(@Param('ticketId') ticketId: string) {
-        return await this.assignedTicketService.getAssignedTicketsByTicketId(ticketId);
-    }
-
-    @Roles(Role.Admin)
-    @Get('all/completed')
-    async getCompletedAssignedTickets() {
-        return await this.assignedTicketService.getCompletedAssignedTickets();
-    }
-
-    @Get('all/incompleted')
-    async getInCompletedAssignedTickets() {
-        return await this.assignedTicketService.getInCompletedAssignedTickets();
-    }
 
 }
