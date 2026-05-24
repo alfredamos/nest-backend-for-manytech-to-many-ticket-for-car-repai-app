@@ -6,5 +6,5 @@ export class CustomerWithUser {
     active: boolean = true;
     notes: string = "";
     userId: string = "";
-    user!: User
+    user!: User;
 }

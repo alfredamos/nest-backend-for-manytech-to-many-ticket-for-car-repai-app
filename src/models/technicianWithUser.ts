@@ -4,5 +4,5 @@ export class TechnicianWithUser {
     id!: string;
     specialty!: string;
     userId!: string;
-    user!: User
+    user!: User;
 }
