@@ -45,4 +45,10 @@ export class TechniciansController {
   async getTechByUserId(@Param('userId') userId: string){
     return await this.techniciansService.getTechByUserId(userId);
   }
+
+  @Roles(Role.Admin)
+  @Get('by-specialty/:specialty')
+  async getTechsBySpecialty(@Param('specialty') specialty: string){
+    return await this.techniciansService.getTechsBySpecialty(specialty);
+  }
 }

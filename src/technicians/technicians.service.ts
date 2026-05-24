@@ -51,9 +51,9 @@ export class TechniciansService {
 
     async getAllTechs(){
         //----> Fetch all technicians.
-       const technicians = await this.prisma.technician.findMany({include: {user: true}});
+        const technicians = await this.prisma.technician.findMany({include: {user: true}});
 
-       //----> Send back response.
+        //----> Send back response.
         return technicians?.map(tech => toTechnicianResponse(tech));
     }
 
@@ -68,6 +68,14 @@ export class TechniciansService {
 
         //----> Send back response.
         return toTechnicianResponse(technician);
+    }
+
+    async getTechsBySpecialty(specialty: string){
+        //----> Fetch tech with the giving specialty.
+        const technicians = await this.prisma.technician.findMany({where: {specialty}, include: {user: true}});
+
+        //----> Send back response.
+        return technicians?.map(tech => toTechnicianResponse(tech));
     }
 
     private async getOneTech(id: string){
