@@ -12,7 +12,6 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
-    console.log("In prisma-service, adapterParameters: ", adapterParameters())
     const adapter = new PrismaMariaDb({
       user: process.env['USER'],
       password: process.env['PASSWORD'],

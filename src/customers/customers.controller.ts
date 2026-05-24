@@ -10,6 +10,12 @@ export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
   @Roles(Role.Admin)
+  @Patch('change-status/:id')
+  async changeCustomerStatus(@Param('id') id: string){
+    return await this.customersService.changeCustomerStatus(id);
+  }
+
+  @Roles(Role.Admin)
   @Post()
   async createCustomer(@Body() customer: CustomerUncheckedCreateInput){
     return await this.customersService.createCustomer(customer);
@@ -34,6 +40,12 @@ export class CustomersController {
   }
 
   @Roles(Role.Admin)
+  @Get('all/inactive')
+  async getInactiveCustomers(){
+    return await this.customersService.getInactiveCustomers();
+  }
+
+  @Roles(Role.Admin)
   @Get()
   async getAllCustomers(){
     return await this.customersService.getAllCustomers();
@@ -50,12 +62,6 @@ export class CustomersController {
   @Get('by-user-id/:userId')
   async getCustomerByUserId(@Param('userId') userId: string){
     return await this.customersService.getCustomersByUserId(userId);
-  }
-
-  @Roles(Role.Admin)
-  @Get('all/inactive')
-  async getInactiveCustomers(){
-    return await this.customersService.getInactiveCustomers();
   }
 
 }

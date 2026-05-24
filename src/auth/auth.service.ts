@@ -139,6 +139,28 @@ export class AuthService {
     return fromUserToUserDto(user);
   }
 
+  async getUserSessionByToken(token: string){
+    //----> Check for null token.
+    if (!token){
+      return emptyUserSession;
+    }
+
+    console.log("At point 1, in get-user-session-by-token, token : ", token);
+
+    //----> Verify token
+    const jwtPayload = await this.validateUserToken(token);
+
+    console.log("At point 2, in get-user-session-by-token, jwtPayload : ", jwtPayload);
+
+    //----> Map JwtPayload from TokenJwt.
+    const tokenJwt = this.makeTokenJwtFromJwtPayload(jwtPayload);
+
+    console.log("At point 3, in get-user-session-by-token, tokenJwt : ", tokenJwt);
+
+    //----> Make session.
+    return this.makeSession(tokenJwt, token);
+  }
+
   async getUserSession(req: Request): Promise<UserSession> {
     //----> Get access-token
     const accessToken = this.getToken(CookieParam.accessTokenName, req);

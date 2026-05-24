@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PrismaService } from './prisma/prisma.service';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import {AuthService} from "./auth/auth.service";
 
 @Module({
   imports: [

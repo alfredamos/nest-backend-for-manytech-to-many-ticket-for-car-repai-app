@@ -92,6 +92,9 @@ export class CustomersService {
     async getInactiveCustomers() {
         //----> Fetch all inactive customers.
         const customers = await this.prisma.customer.findMany({where: {active: false}, include: {user: true}});
+
+        //----> Send back response.
+        return customers?.map(customer => toCustomerResponse(customer as CustomerWithUser));
     }
 
     private async getOneCustomer(id: string) {
